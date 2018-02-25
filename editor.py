@@ -40,7 +40,6 @@ def main():
 
     while True:
         key = visual.scene.kb.getkey()
-        print key
 
         if key == 'e':
             e.displace( ( 0, 0,-1) )
@@ -54,6 +53,11 @@ def main():
             e.displace( ( 0, 1, 0) )
         elif key == 's':
             e.displace( ( 0,-1, 0) )
+        elif key == '\t':
+            e.obj_sel(1)
+            print 'now controlling', e.selected().name
+        else:
+            print(repr(key))
 
 if __name__ == '__main__':
     try:
