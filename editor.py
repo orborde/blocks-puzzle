@@ -34,7 +34,7 @@ class Editor(object):
         obj.pos = add(obj.pos, offset)
 
 def main():
-    objects = [Piece(name, pos=(0, 0, idx*3))
+    objects = [Piece(name, pos=(-18 + idx*6, 0, 0))
                for idx,name in enumerate(pieces())]
     e = Editor(objects)
 
