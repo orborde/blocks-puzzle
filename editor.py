@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
+import ast
 import itertools
+import os
 import pdb
 import sys
 import traceback
@@ -47,11 +49,47 @@ class Editor(object):
         obj = self.selected()
         obj.pos = add(obj.pos, offset)
 
+def load_objects(path):
+    # TODO: is this ast parsing actually safe?
+    f = open(path, 'r')
+    objects = []
+    for spec in f:
+        spec = spec.strip()
+        name,pos,axis,up = spec.split(';')
+        pos,axis,up = [
+            ast.literal_eval(e) for e in
+            [pos,axis,up]]
+        obj = Piece(name, pos=pos)
+        obj.axis = axis
+        obj.up = up
+        objects.append(obj)
+    return objects
+
+def vec2str(vec):
+    return '('+','.join('%d'%v for v in vec)+')'
+
+def save_objects(path, objects):
+    newpath = path+'.new'
+    f = open(newpath, 'w')
+    for obj in objects:
+        f.write(';'.join(
+            [obj.name] + map(vec2str, [obj.pos, obj.axis, obj.up])))
+        f.write('\n')
+    f.close()
+    os.rename(newpath, path)
+
 def main():
     visual.scene.width = 800
     visual.scene.height = 800
-    objects = [Piece(name, pos=(-18 + idx*6, 0, 0))
-               for idx,name in enumerate(pieces())]
+
+    _, target = sys.argv
+
+    if not os.path.exists(target):
+        objects = [Piece(name, pos=(-18 + idx*6, 0, 0))
+                   for idx,name in enumerate(pieces())]
+    else:
+        objects = load_objects(target)
+
     e = Editor(objects)
 
     while True:
@@ -81,6 +119,8 @@ def main():
             e.up_sel()
         else:
             print(repr(key))
+
+        save_objects(target, objects)
 
 if __name__ == '__main__':
     try:
