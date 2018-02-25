@@ -131,7 +131,8 @@ def main():
         else:
             print len(conflicts),
             print ','.join(
-                reduce(lambda x,y: x.union(y), conflicts.values())),
+                reduce(lambda x,y: x.union(y), [
+                    assembly.getpos(pos) for pos in conflicts])),
             print 'conflicts; didn\'t save'
 
 if __name__ == '__main__':

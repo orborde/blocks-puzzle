@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import collections
 import os
 import pdb
 import sys
@@ -161,22 +160,20 @@ class Piece(object):
             o.color = self._color
 
 RADIUS=20
+SIDELENGTH=RADIUS*2+1
 class Assembly:
-    def __init__(
-            self,
-            lowcorner=(-RADIUS,-RADIUS,-RADIUS),
-            sidelength=RADIUS*2+1):
+    def __init__(self):
         self._array = []
-        for x in range(sidelength):
+        for x in range(SIDELENGTH):
             plane = []
-            for y in range(sidelength):
-                row = [None]*sidelength
+            for y in range(SIDELENGTH):
+                row = [set() for _ in xrange(SIDELENGTH)]
                 plane.append(row)
-            assert len(plane) == sidelength
+            assert len(plane) == SIDELENGTH
             self._array.append(plane)
 
-        self._lowcorner = lowcorner
-        self.conflicts = collections.defaultdict(set)
+        self._lowcorner = (-RADIUS,-RADIUS,-RADIUS)
+        self.conflicts = set()
 
     def pos2index(self, pos):
         index = sub(pos, self._lowcorner)
@@ -188,10 +185,10 @@ class Assembly:
         assert all(l <= p for l,p in zip(self._lowcorner,pos))
         return pos
 
-    def setpos(self, pos, val):
+    def addtopos(self, pos, val):
         index = self.pos2index(pos)
         i,j,k = index
-        self._array[i][j][k] = val
+        self._array[i][j][k].add(val)
 
     def getpos(self, pos):
         index = self.pos2index(pos)
@@ -203,11 +200,10 @@ class Assembly:
             assert z == 0
             spotpos = add(pos, add(mul(x, axis), mul(y, up)))
 
-            if self.getpos(spotpos) is not None:
-                self.conflicts[spotpos].add(self.getpos(spotpos))
-                self.conflicts[spotpos].add(name)
+            if len(self.getpos(spotpos)) > 0:
+                self.conflicts.add(spotpos)
 
-            self.setpos(spotpos, name)
+            self.addtopos(spotpos, name)
         fill_via_func(fill, occ)
 
 def main():
