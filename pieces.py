@@ -30,17 +30,23 @@ def cube(**kwargs):
     return visual.box(size=(1,1,1), **kwargs)
 
 PIECE_DIR = 'pieces'
-def spawn(piece, **kwargs):
+def load_raw(piece):
     path = os.path.join(PIECE_DIR, piece)
     data = open(path, 'r').read()
     color, occ = parse(data)
+    return color,occ
 
+def spawn_from_raw(color, occ, **kwargs):
     f = visual.frame(**kwargs)
     for row in range(5):
         for col in range(7):
             if occ[row][col]:
                 cube(frame=f, pos=(row,col,0), color=color)
     return f
+
+def spawn(piece, **kwargs):
+    color, occ = load_raw(piece)
+    return spawn_from_raw(color, occ, **kwargs)
 
 def pieces():
     return [
