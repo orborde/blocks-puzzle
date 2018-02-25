@@ -60,12 +60,30 @@ AXES = [
 AXES_set = set(AXES)
 
 def compatible(axis, up):
-    assert axis in AXIS_set
-    assert up in AXIS_set
+    assert axis in AXES_set
+    assert up in AXES_set
 
     return (
         axis != up and
         up != neg(axis))
+
+def next_axis(axis, up):
+    start_idx = AXES.index(axis)
+    for adv in xrange(1, len(AXES)):
+        idx = (start_idx + adv)%len(AXES)
+        cand_axis = AXES[idx]
+        if compatible(cand_axis, up):
+            return cand_axis
+    raise Exception("wtf")
+
+def next_up(axis, up):
+    start_idx = AXES.index(up)
+    for adv in xrange(1, len(AXES)):
+        idx = (start_idx + adv)%len(AXES)
+        cand_up = AXES[idx]
+        if compatible(axis, cand_up):
+            return cand_up
+    raise Exception("wtf")
 
 class Piece(object):
     def __init__(self, name, pos):
@@ -93,7 +111,7 @@ class Piece(object):
 
     @axis.setter
     def axis(self, axis):
-        assert axis in AXIS_set
+        assert axis in AXES_set
         self._vobj.axis = axis
         self._axis = axis
 
