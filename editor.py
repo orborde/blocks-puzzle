@@ -120,7 +120,18 @@ def main():
         else:
             print(repr(key))
 
-        save_objects(target, objects)
+        assembly = Assembly()
+        for obj in objects:
+            assembly.place(
+                obj.name, obj.pos, obj.axis, obj.up, obj.occ)
+
+        conflicts = assembly.conflicts
+        if len(conflicts) == 0:
+            save_objects(target, objects)
+        else:
+            print len(conflicts),
+            print sum(len(v) for v in conflicts.values()),
+            print 'conflicts; didn\'t save'
 
 if __name__ == '__main__':
     try:

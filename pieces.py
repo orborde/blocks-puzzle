@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import collections
 import os
 import pdb
 import sys
@@ -74,6 +75,12 @@ def add(a,b):
     assert len(a) == len(b)
     return tuple(x+y for x,y in zip(a,b))
 
+def sub(a,b):
+    return add(a, neg(b))
+
+def mul(k, v):
+    return tuple(k*e for e in v)
+
 def compatible(axis, up):
     assert axis in AXES_set
     assert up in AXES_set
@@ -109,7 +116,7 @@ class Piece(object):
         color, occ = load_raw(name)
         self._vobj = spawn_from_raw(color, occ)
         self._color = color
-        self._occ = occ
+        self.occ = occ
         self.pos = pos
         self.axis = ( 1, 0, 0)
         self.up = ( 0, 1, 0)
@@ -152,6 +159,56 @@ class Piece(object):
         self._color = kolor
         for o in self._vobj.objects:
             o.color = self._color
+
+RADIUS=100
+class Assembly:
+    def __init__(
+            self,
+            lowcorner=(-RADIUS,-RADIUS,-RADIUS),
+            sidelength=RADIUS*2+1):
+        self._array = []
+        for x in range(sidelength):
+            plane = []
+            for y in range(sidelength):
+                row = [None]*sidelength
+                plane.append(row)
+            assert len(plane) == sidelength
+            self._array.append(plane)
+
+        self._lowcorner = lowcorner
+        self.conflicts = collections.defaultdict(set)
+
+    def pos2index(self, pos):
+        index = sub(pos, self._lowcorner)
+        assert all(r>=0 for r in index)
+        return index
+
+    def index2pos(self, index):
+        pos = add(index, self._lowcorner)
+        assert all(l <= p for l,p in zip(self._lowcorner,pos))
+        return pos
+
+    def setpos(self, pos, val):
+        index = self.pos2index(pos)
+        i,j,k = index
+        self._array[i][j][k] = val
+
+    def getpos(self, pos):
+        index = self.pos2index(pos)
+        i,j,k = index
+        return self._array[i][j][k]
+
+    def place(self, name, pos, axis, up, occ):
+        def fill(x,y,z):
+            assert z == 0
+            spotpos = add(pos, add(mul(x, axis), mul(y, up)))
+
+            if self.getpos(spotpos) is not None:
+                self.conflicts[spotpos].add(self.getpos(spotpos))
+                self.conflicts[spotpos].add(name)
+
+            self.setpos(spotpos, name)
+        fill_via_func(fill, occ)
 
 def main():
     for idx,piece in enumerate(pieces()):
