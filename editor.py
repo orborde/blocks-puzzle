@@ -130,7 +130,8 @@ def main():
             save_objects(target, objects)
         else:
             print len(conflicts),
-            print sum(len(v) for v in conflicts.values()),
+            print ','.join(
+                reduce(lambda x,y: x.union(y), conflicts.values())),
             print 'conflicts; didn\'t save'
 
 if __name__ == '__main__':
