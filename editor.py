@@ -75,6 +75,10 @@ def main():
             e.obj_sel(1)
         elif key == '`':
             e.obj_sel(-1)
+        elif key == 'l':
+            e.axis_sel()
+        elif key == 'p':
+            e.up_sel()
         else:
             print(repr(key))
 

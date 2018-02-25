@@ -103,6 +103,8 @@ class Piece(object):
         self._color = color
         self._occ = occ
         self.pos = pos
+        self.axis = ( 1, 0, 0)
+        self.up = ( 0, 1, 0)
 
     @property
     def pos(self):
