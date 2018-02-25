@@ -2,27 +2,58 @@
 
 import itertools
 import pdb
-import pieces
 import sys
 import traceback
+import visual
 
-AXES = [
-    ( 1, 0, 0),
-    (-1, 0, 0),
-    ( 0, 1, 0),
-    ( 0,-1, 0),
-    ( 0, 0, 1),
-    ( 0, 0,-1),
-]
+from pieces import *
+
+VALID_ADV = set([-1,1])
+class Editor(object):
+    def __init__(self, objects):
+        self._objects = objects
+        self._index = 0
+
+    def selected(self):
+        return self._objects[self._index]
+
+    def obj_sel(self, adv):
+        assert adv in VALID_ADV
+        self._index = (self._index + adv)%len(self._objects)
+
+    def axis_sel(self):
+        obj = self.selected()
+        obj.axis = next_axis(obj.axis, obj.up)
+
+    def up_sel(self):
+        obj = self.selected()
+        obj.up = next_up(obj.axis, obj.up)
+
+    def displace(self, offset):
+        obj = self.selected()
+        obj.pos = add(obj.pos, offset)
+
 def main():
-    for row,(axis,up) in enumerate(
-            itertools.permutations(AXES,r=2)):
-        for col,piece in enumerate(pieces.pieces()):
-            pieces.spawn(
-                piece,
-                pos=(col*14, row*14, 0),
-                axis=axis, up=up)
+    objects = [Piece(name, pos=(0, 0, idx*3))
+               for idx,name in enumerate(pieces())]
+    e = Editor(objects)
 
+    while True:
+        key = visual.scene.kb.getkey()
+        print key
+
+        if key == 'e':
+            e.displace( ( 0, 0,-1) )
+        elif key == 'q':
+            e.displace( ( 0, 0, 1) )
+        elif key == 'a':
+            e.displace( (-1, 0, 0) )
+        elif key == 'd':
+            e.displace( ( 1, 0, 0) )
+        elif key == 'w':
+            e.displace( ( 0, 1, 0) )
+        elif key == 's':
+            e.displace( ( 0,-1, 0) )
 
 if __name__ == '__main__':
     try:

@@ -59,6 +59,13 @@ AXES = [
 ]
 AXES_set = set(AXES)
 
+def neg(v):
+    return tuple(-e for e in v)
+
+def add(a,b):
+    assert len(a) == len(b)
+    return tuple(x+y for x,y in zip(a,b))
+
 def compatible(axis, up):
     assert axis in AXES_set
     assert up in AXES_set
