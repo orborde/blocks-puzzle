@@ -21,7 +21,7 @@ def parse(filedata):
     assert len(colordata) == 3
 
     occupancy = []
-    for line in lines:
+    for line in lines[1:]:
         assert len(line) == 7
         occupancy.append([OCC_MAP[c] for c in line])
     return colordata, occupancy
@@ -38,7 +38,8 @@ def spawn(piece, **kwargs):
     f = visual.frame(**kwargs)
     for row in range(5):
         for col in range(7):
-            cube(frame=f, pos=(row,col,0), color=color)
+            if occ[row][col]:
+                cube(frame=f, pos=(row,col,0), color=color)
     return f
 
 def pieces():
