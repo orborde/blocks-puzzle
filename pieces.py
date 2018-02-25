@@ -100,6 +100,7 @@ class Piece(object):
         # later.
         color, occ = load_raw(name)
         self._vobj = spawn_from_raw(color, occ)
+        self._color = color
         self._occ = occ
         self.pos = pos
 
@@ -132,6 +133,15 @@ class Piece(object):
         self._vobj.up = up
         self._up = up
 
+    @property
+    def color(self):
+        return self._color
+
+    @color.setter
+    def color(self, kolor):
+        self._color = kolor
+        for o in self._vobj.objects:
+            o.color = self._color
 
 def main():
     for idx,piece in enumerate(pieces()):

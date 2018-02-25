@@ -12,7 +12,10 @@ VALID_ADV = set([-1,1])
 class Editor(object):
     def __init__(self, objects):
         self._objects = objects
+        # Prime the pump
         self._index = 0
+        self._old_color = self.selected().color
+        self.index = 0
 
     @property
     def index(self):
@@ -20,7 +23,10 @@ class Editor(object):
 
     @index.setter
     def index(self, idx):
+        self.selected().color = self._old_color
         self._index = idx
+        self._old_color = self.selected().color
+        self.selected().color = (1, 1, 1)
 
     def selected(self):
         return self._objects[self._index]
