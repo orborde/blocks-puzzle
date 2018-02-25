@@ -36,12 +36,20 @@ def load_raw(piece):
     color, occ = parse(data)
     return color,occ
 
-def spawn_from_raw(color, occ, **kwargs):
-    f = visual.frame(**kwargs)
+def fill_via_func(fill, occ):
     for row in range(5):
         for col in range(7):
             if occ[row][col]:
-                cube(frame=f, pos=(row,col,0), color=color)
+                x,y,z = row,col,0
+                fill(x,y,z)
+
+def spawn_from_raw(color, occ, **kwargs):
+    f = visual.frame(**kwargs)
+
+    def fill(x,y,z):
+        cube(frame=f, pos=(x,y,z), color=color)
+
+    fill_via_func(fill, occ)
     return f
 
 def pieces():
