@@ -2,7 +2,7 @@
 
 # How do I use it?
 
-`editor.py initial.config` is probably a good place to start. Note
+`./editor.py initial.config` is probably a good place to start. Note
 that you autosave if there are no conflicts.
 
 - `qweasd`: Translate current piece.
