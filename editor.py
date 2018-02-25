@@ -39,6 +39,8 @@ def main():
     e = Editor(objects)
 
     while True:
+        print 'now controlling', e.selected().name
+
         key = visual.scene.kb.getkey()
 
         if key == 'e':
@@ -55,7 +57,8 @@ def main():
             e.displace( ( 0,-1, 0) )
         elif key == '\t':
             e.obj_sel(1)
-            print 'now controlling', e.selected().name
+        elif key == '`':
+            e.obj_sel(-1)
         else:
             print(repr(key))
 
