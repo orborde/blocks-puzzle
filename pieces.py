@@ -195,6 +195,12 @@ class Assembly:
         i,j,k = index
         return self._array[i][j][k]
 
+    def all_positions(self):
+        for i in xrange(len(self._array)):
+            for j in xrange(len(self._array[i])):
+                for k in xrange(len(self._array[j])):
+                    yield self.index2pos( (i,j,k) )
+
     def place(self, name, pos, axis, up, occ):
         def fill(x,y,z):
             assert z == 0
@@ -205,6 +211,18 @@ class Assembly:
 
             self.addtopos(spotpos, name)
         fill_via_func(fill, occ)
+
+    def center_of_mass(self):
+        sm = 0,0,0
+        ct = 0
+        for pos in self.all_positions():
+            localct = len(self.getpos(pos))
+            sm = add(sm, mul(localct, pos))
+            ct += localct
+        ict = 1/float(ct)
+        center = mul(ict, sm)
+        center = tuple(map(int, center))
+        return center
 
 def main():
     for idx,piece in enumerate(pieces()):

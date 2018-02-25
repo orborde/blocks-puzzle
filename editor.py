@@ -5,6 +5,7 @@ import itertools
 import os
 import pdb
 import sys
+import time
 import traceback
 import visual
 
@@ -93,6 +94,21 @@ def main():
     e = Editor(objects)
 
     while True:
+        assembly = Assembly()
+        for obj in objects:
+            assembly.place(
+                obj.name, obj.pos, obj.axis, obj.up, obj.occ)
+
+        conflicts = assembly.conflicts
+        if len(conflicts) == 0:
+            save_objects(target, objects)
+        else:
+            print len(conflicts),
+            print ','.join(
+                reduce(lambda x,y: x.union(y), [
+                    assembly.getpos(pos) for pos in conflicts])),
+            print 'conflicts; didn\'t save'
+
         print 'now controlling', e.selected().name
 
         key = visual.scene.kb.getkey()
@@ -117,23 +133,16 @@ def main():
             e.axis_sel()
         elif key == 'p':
             e.up_sel()
+        elif key == 'n':
+            start = time.time()
+            com = assembly.center_of_mass()
+            print 'com =', com
+            for obj in objects:
+                obj.pos = sub(obj.pos, com)
+            print 'renormed in', time.time()-start
         else:
             print(repr(key))
 
-        assembly = Assembly()
-        for obj in objects:
-            assembly.place(
-                obj.name, obj.pos, obj.axis, obj.up, obj.occ)
-
-        conflicts = assembly.conflicts
-        if len(conflicts) == 0:
-            save_objects(target, objects)
-        else:
-            print len(conflicts),
-            print ','.join(
-                reduce(lambda x,y: x.union(y), [
-                    assembly.getpos(pos) for pos in conflicts])),
-            print 'conflicts; didn\'t save'
 
 if __name__ == '__main__':
     try:
