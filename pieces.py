@@ -160,7 +160,7 @@ class Piece(object):
         for o in self._vobj.objects:
             o.color = self._color
 
-RADIUS=100
+RADIUS=20
 class Assembly:
     def __init__(
             self,
