@@ -14,12 +14,20 @@ class Editor(object):
         self._objects = objects
         self._index = 0
 
+    @property
+    def index(self):
+        return self._index
+
+    @index.setter
+    def index(self, idx):
+        self._index = idx
+
     def selected(self):
         return self._objects[self._index]
 
     def obj_sel(self, adv):
         assert adv in VALID_ADV
-        self._index = (self._index + adv)%len(self._objects)
+        self.index = (self.index + adv)%len(self._objects)
 
     def axis_sel(self):
         obj = self.selected()
