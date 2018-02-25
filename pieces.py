@@ -57,6 +57,7 @@ AXES = [
     ( 0, 0, 1),
     ( 0, 0,-1),
 ]
+AXES_set = set(AXES)
 
 class Piece(object):
     def __init__(self, name, pos):
@@ -84,6 +85,7 @@ class Piece(object):
 
     @axis.setter
     def axis(self, axis):
+        assert axis in AXIS_set
         self._vobj.axis = axis
         self._axis = axis
 
@@ -93,6 +95,7 @@ class Piece(object):
 
     @up.setter
     def up(self, up):
+        assert up in AXIS_set
         self._vobj.up = up
         self._up = up
 
