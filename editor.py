@@ -48,6 +48,8 @@ class Editor(object):
         obj.pos = add(obj.pos, offset)
 
 def main():
+    visual.scene.width = 800
+    visual.scene.height = 800
     objects = [Piece(name, pos=(-18 + idx*6, 0, 0))
                for idx,name in enumerate(pieces())]
     e = Editor(objects)
