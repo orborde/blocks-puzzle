@@ -44,19 +44,62 @@ def spawn_from_raw(color, occ, **kwargs):
                 cube(frame=f, pos=(row,col,0), color=color)
     return f
 
-def spawn(piece, **kwargs):
-    color, occ = load_raw(piece)
-    return spawn_from_raw(color, occ, **kwargs)
-
 def pieces():
     return [
         f for f in os.listdir(PIECE_DIR)
         if os.path.isfile(os.path.join(PIECE_DIR, f))]
 
+AXES = [
+    ( 1, 0, 0),
+    (-1, 0, 0),
+    ( 0, 1, 0),
+    ( 0,-1, 0),
+    ( 0, 0, 1),
+    ( 0, 0,-1),
+]
+
+class Piece(object):
+    def __init__(self, name, pos):
+        # TODO: make public fields properties
+        self.name = name
+        # Spawn the vobj first so that the property setters work
+        # later.
+        color, occ = load_raw(name)
+        self._vobj = spawn_from_raw(color, occ)
+        self._occ = occ
+        self.pos = pos
+
+    @property
+    def pos(self):
+        return self._pos
+
+    @pos.setter
+    def pos(self, pos):
+        self._vobj.pos = pos
+        self._pos = pos
+
+    @property
+    def axis(self):
+        return self._axis
+
+    @axis.setter
+    def axis(self, axis):
+        self._vobj.axis = axis
+        self._axis = axis
+
+    @property
+    def up(self):
+        return self._up
+
+    @up.setter
+    def up(self, up):
+        self._vobj.up = up
+        self._up = up
+
+
 def main():
     for idx,piece in enumerate(pieces()):
-        spawn(piece, pos=(idx*6, 0, 0))
-
+        q = Piece(piece, pos=(idx*6, 0, 0))
 
 if __name__ == '__main__':
     try:
