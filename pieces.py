@@ -59,6 +59,14 @@ AXES = [
 ]
 AXES_set = set(AXES)
 
+def compatible(axis, up):
+    assert axis in AXIS_set
+    assert up in AXIS_set
+
+    return (
+        axis != up and
+        up != neg(axis))
+
 class Piece(object):
     def __init__(self, name, pos):
         # TODO: make public fields properties
@@ -95,7 +103,7 @@ class Piece(object):
 
     @up.setter
     def up(self, up):
-        assert up in AXIS_set
+        assert compatible(self.axis, up)
         self._vobj.up = up
         self._up = up
 
