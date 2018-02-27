@@ -135,10 +135,10 @@ def main():
             e.up_sel()
         elif key == 'n':
             start = time.time()
-            com = assembly.center_of_mass()
-            print 'com =', com
+            cent = assembly.bbox_center()
+            print 'cent =', cent
             for obj in objects:
-                obj.pos = sub(obj.pos, com)
+                obj.pos = sub(obj.pos, cent)
             print 'renormed in', time.time()-start
         else:
             print(repr(key))

@@ -80,6 +80,12 @@ def sub(a,b):
 def mul(k, v):
     return tuple(k*e for e in v)
 
+def max_pairwise(a,b):
+    return tuple(max(x,y) for x,y in zip(a,b))
+
+def min_pairwise(a,b):
+    return tuple(min(x,y) for x,y in zip(a,b))
+
 def compatible(axis, up):
     assert axis in AXES_set
     assert up in AXES_set
@@ -164,6 +170,8 @@ SIDELENGTH=RADIUS*2+1
 class Assembly:
     def __init__(self):
         self._array = []
+        self._bbox_low  = (0, 0, 0)
+        self._bbox_high = (0, 0, 0)
         for x in range(SIDELENGTH):
             plane = []
             for y in range(SIDELENGTH):
@@ -209,18 +217,14 @@ class Assembly:
             if len(self.getpos(spotpos)) > 0:
                 self.conflicts.add(spotpos)
 
+            self._bbox_low = min_pairwise(spotpos, self._bbox_low)
+            self._bbox_high = max_pairwise(spotpos, self._bbox_high)
             self.addtopos(spotpos, name)
         fill_via_func(fill, occ)
 
-    def center_of_mass(self):
-        sm = 0,0,0
-        ct = 0
-        for pos in self.all_positions():
-            localct = len(self.getpos(pos))
-            sm = add(sm, mul(localct, pos))
-            ct += localct
-        ict = 1/float(ct)
-        center = mul(ict, sm)
+    def bbox_center(self):
+        sm = add(self._bbox_low, self._bbox_high)
+        center = mul(0.5, sm)
         center = tuple(map(int, center))
         return center
 
